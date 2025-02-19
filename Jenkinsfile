@@ -1,38 +1,48 @@
 pipeline {
     agent any
+
+    environment {
+        GITHUB_TOKEN = credentials('github-access-token')
+    }
     
     stages {
-        stage('Install Puppet Agent') {
+        stage('Clone Repository') {
             steps {
                 script {
                     sh '''
-                    # Install and configure Puppet agent on the slave node
-                    sudo apt-get update
-                    sudo apt-get install -y puppet
-                    sudo puppet resource service puppet ensure=running enable=true
+                    git clone https://$GITHUB_TOKEN@github.com/sreejeshd/CICD-Project-1.git
+                    cd CICD-Project-1
                     '''
                 }
             }
         }
         
+        stage('Install Puppet Agent') {
+            steps {
+                script {
+                    sh '''
+                    sudo apt-get update
+                    sudo apt-get install -y puppet
+                    sudo /usr/bin/puppet resource service puppet ensure=running enable=true
+                    '''
+                }
+            }
+        }
+
         stage('Install Docker with Ansible') {
             steps {
                 script {
                     sh '''
-                    # Push Ansible configuration to the test server to install Docker
                     ansible-playbook -i inventory install_docker.yml
                     '''
                 }
             }
         }
-        
+
         stage('Deploy PHP Docker Container') {
             steps {
                 script {
                     sh '''
-                    # Pull the PHP website and Dockerfile from the Git repository, build the Docker image, and deploy the PHP Docker container
-                    git clone https://github.com/your-repo/projCert.git
-                    cd projCert
                     docker build -t php-app .
                     docker stop php-app-container || true
                     docker rm php-app-container || true
@@ -47,7 +57,6 @@ pipeline {
         failure {
             script {
                 sh '''
-                # If Job 3 fails, delete the running container on the test server
                 docker rm -f php-app-container || true
                 '''
             }
