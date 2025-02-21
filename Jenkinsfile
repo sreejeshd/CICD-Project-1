@@ -26,7 +26,7 @@ pipeline {
                     sh '''
                     sudo apt-get update
                     sudo apt-get install -y puppet
-                    sudo /opt/puppetlabls/bin/puppet resource service puppet ensure=running enable=true
+                    sudo /opt/puppetlabs/bin/puppet resource service puppet ensure=running enable=true
                     '''
                 }
             }
