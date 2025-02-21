@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GITHUB_TOKEN = credentials('github-access-token')
+        GITHUB_TOKEN = credentials('CICD-project1')
     }
     
     stages {
