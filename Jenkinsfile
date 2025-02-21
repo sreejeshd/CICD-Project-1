@@ -57,11 +57,15 @@ pipeline {
     }
 
     post {
+        success {
+            echo 'Build succeeded! Application deployed successfully.'
+        }
         failure {
-            script {
-                sh '''
-                docker rm -f php-app-container || true
-                '''
+            echo 'Build failed. Performing cleanup...'
+            // Remove the Docker container if the build fails
+            sh '''
+            docker rm -f php-app-container || true
+            '''
             }
         }
     }
