@@ -10,6 +10,9 @@ pipeline {
             steps {
                 script {
                     sh '''
+                    if [ -d "CICD-Project-1" ]; then
+                        rm -rf CICD-Project-1
+                    fi
                     git clone https://$GITHUB_TOKEN@github.com/sreejeshd/CICD-Project-1.git
                     cd CICD-Project-1
                     '''
@@ -23,7 +26,7 @@ pipeline {
                     sh '''
                     sudo apt-get update
                     sudo apt-get install -y puppet
-                    sudo /usr/bin/puppet resource service puppet ensure=running enable=true
+                    sudo /opt/puppetlabls/bin/puppet resource service puppet ensure=running enable=true
                     '''
                 }
             }
